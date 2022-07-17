@@ -1,0 +1,55 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load workout_tags %}
+
+{% block title %}Тренировка: {{ w_date|date:"j b. Y" }} | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'history_workout' %}">История тренировок</a></li>
+        <li><a href="{% url 'history_workout_month' w_date.year w_date.month %}">{{ w_date.month|name_month }}</a></li>
+        <li>{{ w_date|date:"j b. Y" }}</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<h2 class="workout-date">Тренировка от {{ w_date|date:"j b. Y" }} г.</h2>
+<form action="" method="post">
+    <div class="btn-create register-btn">
+        <input type="submit" class="btn" name="save_w" value="Применить изменения">
+    </div>
+    {% csrf_token %}
+    {% for form in forms %}
+    <div class="form-create one-field">
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="form-field-user">
+            {{ field.errors }}
+            <label for="">Упражнение {{ forloop.parentloop.counter }}:
+                {{ field }}
+            </label>
+        </div>
+        {% endfor %}
+        {{ form.non_field_errors }}
+    </div>
+    {% endfor %}
+    <div class="form-create">
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="form-field-user">
+            {{ field.errors }}
+            <label for="">Добавить упражнение:
+                {{ field }}
+            </label>
+        </div>
+        {% endfor %}
+        {{ form.non_field_errors }}
+    </div>
+    <div class="btn-create register-btn">
+        <input type="submit" class="btn" name="save_w" value="Применить изменения">
+    </div>
+</form>
+{% endblock %}

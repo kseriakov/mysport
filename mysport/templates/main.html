@@ -1,0 +1,112 @@
+﻿{% load static %}
+{% load news_tag %}
+{% load user_messages_tags %}
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>{% block title %}MySport{% endblock %}</title>
+    <link rel='stylesheet' type='text/css' href="{% static 'main.css' %}">
+    <style>
+        @font-face {
+            font-family: "Exo2";
+            font-style: normal;
+            src: url("{% static 'fonts/Exo2-Regular.ttf' %}");
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="main-header">
+            <div class="header-logo">
+                <div class="logo"><a href="{% url 'home' %}"><img src="{% static 'img/site-logo.png' %}"></a></div>
+                <div class="title-site">
+                    <p class="site-name">Твой личный спортивный дневник</p>
+                </div>
+            </div>
+            <div class="header-user">
+                <div class="user-login">
+                    {% if user.is_authenticated %}
+                    <h3><a href="{% url 'logout' %}">Logout</a></h3>
+                    {% else %}
+                    <h3><a href="{% url 'register' %}">Register | </a><a href="{% url 'login' %}">Login</a></h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+
+        {% show_new_messages as cnt_list_new_message %}
+
+        <div class="main-content">
+            {% block breadcrumbs %}{% endblock %}
+            {% include 'info_messages.html' %}
+            {% block content %}{% endblock %}
+        </div>
+        <div class="sidebar">
+            <div class="nav">
+                {% if user.is_authenticated %}
+                <p class="username">Вы вошли, как {{ user.username }}</p>
+                {% endif %}
+                <p class="title-menu">Меню сайта</p>
+                <ul class="list-menu">
+                    {% if user.is_authenticated %}
+                    <li class="menu-item">
+                        <div class="menu-item-img">
+                            <a href="{% url 'profile' %}"><img src="{% static 'img/account.png' %}" alt=""></a>
+                        </div>
+                        <div class="menu-item-link">
+                            <a href="{% url 'profile' %}">MY Профиль</a>
+                        </div>
+                    </li>
+                    <li class="menu-item">
+                        <div class="menu-item-img">
+                            <a href="{% url 'user_message' %}"><img src="{% static 'img/message.png' %}" alt=""></a>
+                        </div>
+                        <div class="menu-item-link">
+                            <a href="{% url 'user_message' %}">MY Сообщения  
+                                {% if cnt_list_new_message.0 %}
+                                - {{ cnt_list_new_message.0 }}
+                                {% endif %}
+                            </a>
+                        </div>
+                    </li>
+                    {% endif %}
+                    <li class="menu-item">
+                        <div class="menu-item-img">
+                            <a href="{% url 'history_workout' %}"><img src="{% static 'img/running.png' %}" alt=""></a>
+                        </div>
+                        <div class="menu-item-link">
+                            <a href="{% url 'history_workout' %}">MYSport</a>
+                        </div>
+                    </li>
+                    <li class="menu-item">
+                        <div class="menu-item-img">
+                            <a href="#"><img src="{% static 'img/nutrition.png' %}" alt=""></a>
+                        </div>
+                        <div class="menu-item-link">
+                            <a href="{% url 'product' %}">MY Питание</a>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            <hr>
+            <div class="news">
+                {% get_news_in_bar %}
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-site">
+            Подвал сайта
+        </div>
+    </footer>
+</body>
+
+</html>

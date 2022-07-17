@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block title %}Личный кабинет | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'profile' %}">Личный кабинет</a></li>
+        <li>Привязать телеграмм</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="add_telegram">
+    <form action="" method="post">
+        {% csrf_token %}
+        <h3>Введите ваш секретный код из Telegram bot'а:</h3>
+        <div class="secure-code">
+            <div class="input-secure-code">
+                <input type="text" name="secure-code">
+                <input type="submit" class="add-secure-code btn" value="Привязать">
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

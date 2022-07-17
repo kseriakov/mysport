@@ -1,0 +1,27 @@
+<div class="product-ratio">
+    <small>Рейтинг товара: {% get_avg_ratio prod %}</small>
+    <div class="set-score">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% with pk=prod.pk %}
+            <label class="label-for-set-score">
+                {% if list_score|get_dict_object:pk %}
+                Изменить:
+                {% else %}
+                Ваша оценка:
+                {% endif %}
+                <select class="add-product-score" name="add-score" required title="Выберите оценку">
+                    <option></option>
+                    <option {% if list_score|get_dict_object:pk == 1 %}selected{% endif %} value="1">1</a></option>
+                    <option {% if list_score|get_dict_object:pk == 2 %}selected{% endif %} value="2">2</option>
+                    <option {% if list_score|get_dict_object:pk == 3 %}selected{% endif %} value="3">3</option>
+                    <option {% if list_score|get_dict_object:pk == 4 %}selected{% endif %} value="4">4</option>
+                    <option {% if list_score|get_dict_object:pk == 5 %}selected{% endif %} value="5">5</option>
+                </select>
+            {% endwith %}
+                <input type="hidden" name="prod_pk" value="{{ prod.pk }}">
+                <input type="submit" class="btn" value="Отправить">
+            </label>
+        </form>
+    </div>
+</div>

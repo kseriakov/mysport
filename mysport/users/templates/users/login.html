@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Войти | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li>Войти</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="login-please">
+    <h2>Введите Ваш логин и пароль для входа на сайт</h2>
+</div>
+<div class="form-login">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="form-field-login">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+        {% endfor %}
+        <div class="btn-login">
+            <input type="submit" class="btn" value="Войти">
+        </div>
+    </form>
+</div>
+<div class="reset-password">
+    <a href="{% url 'reset_password' %}">Забыли пароль?</a>
+</div>
+
+{% endblock %}

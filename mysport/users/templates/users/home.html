@@ -1,0 +1,43 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li>Главная</li>
+        <li></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+
+
+{% if not user.is_authenticated %}
+<div class="not-auth-home">
+    <div class="need-auth"><img src="{% static 'img/down.png' %}" alt=""></div>
+    <h2>Пожалуйста, <a href="{% url 'login' %}">войдите</a> на сайт или <a href="{% url 'register' %}">зарегистрируйтесь</a>,
+        чтобы воспользоваться всеми предлагаемыми возможностями</h2>
+</div>
+{% else %}
+
+<div class="main-sheet">
+    <div class="hello">
+        <h1>Ты в команде MySport</h1>
+        <h2>Смело делай шаг к лучшему себе</h2>
+    </div>
+    <div class="what-do-you-do">
+        <div class="empty"></div>
+        <div class="choices-mysport">
+            <ul class="list-menu">
+                <li class="menu-item"><a href="{% url 'create_workout' %}">Новая тренировка</a></li>
+                <li class="menu-item"><a href="{% url 'history_workout' %}">Посмотреть историю</a></li>
+                <li class="menu-item"><a href="{% url 'product_create' %}">Добавить обзор на спортпит</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

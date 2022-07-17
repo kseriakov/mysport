@@ -1,0 +1,55 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load workout_tags %}
+
+{% block title %} Тренировки: {{ date.0|name_month }} {{ date.1 }} г. | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'history_workout' %}">История тренировок</a></li>
+        <li>{{ date.0|name_month }}</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="workout-history">
+    <h2 class="detail-history">История ваших тренировок за {{ date.0|name_month }} {{ date.1 }} г.</h2>
+    <div class="sort-exers menu-item">
+        <div class="menu-item-img order-img">
+            <img src="{% static 'img/up-down.png' %}" alt="">
+        </div>
+        <div class="menu-item-link order-link">
+            <form action="" method="get">
+                {% if order == 'start' %}
+                <p><input type="submit" class="astext" name="end" id="" value="с начала месяца"></p>
+                {% else %}
+                <p><input type="submit" class="astext" name="start" id="" value="с конца месяца"></p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    <div class="workout-year">
+        <div class="workout-month-list">
+            {% for w in workouts %}
+            <div class="workout-month day-detail">
+                <div class="month-name date-day">
+                    <h4><a href="{{ w.get_absolute_url }}">{{ w.date|date:"j-m-Y" }}</a></h4>
+                </div>
+                <div class="day-content">
+                    <div class="list">
+                        <ol>
+                            {% for ex in w.content.values %}
+                            <li class="one-exers">{{ ex }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

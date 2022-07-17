@@ -1,0 +1,92 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load nutrition_tags %}
+
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'product' %}">MY Питание</a></li>
+        <li>{{ title }}</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+{% get_score_user as list_score %}
+<div class="article">
+    <div class="one-product">
+        <p>Автор: <a href="#">{{ product.user }}</a></p>
+        <p><small>Добавлено: {{ product.create_at|date:"j-m-Y"}}</small></p>
+        <h2 class="product-name">{{ product.category }}</h2>
+        <div class="product-ratio">
+            <small>Рейтинг товара: {% get_avg_ratio product %}</small>
+            <div class="set-score">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {% with pk=product.pk %}
+                    <label class="label-for-set-score">
+                        {% if list_score|get_dict_object:pk %}
+                        Изменить:
+                        {% else %}
+                        Ваша оценка:
+                        {% endif %}
+                        <select class="add-product-score" name="add-score" required title="Выберите оценку">
+                            <option></option>
+                            <option {% if list_score|get_dict_object:pk == 1 %}selected{% endif %} value="1">1</a></option>
+                            <option {% if list_score|get_dict_object:pk == 2 %}selected{% endif %} value="2">2</option>
+                            <option {% if list_score|get_dict_object:pk == 3 %}selected{% endif %} value="3">3</option>
+                            <option {% if list_score|get_dict_object:pk == 4 %}selected{% endif %} value="4">4</option>
+                            <option {% if list_score|get_dict_object:pk == 5 %}selected{% endif %} value="5">5</option>
+                        </select>
+                        {% endwith %}
+                        <input type="hidden" name="product_obj" value="{{ product }}">
+                        <input type="submit" class="btn" value="Отправить">
+                    </label>
+                </form>
+            </div>
+        </div>
+        <h3 class="maker-name">Производитель: {{ product.maker }}</h3>
+        <div class="maker-ratio">
+            <small>Рейтинг производителя: {% get_avg_ratio product.maker %}</small>
+        </div>
+    </div>
+    <div class="product-content">
+        <div class="prod-img">
+            {% if product.image_set.first %}<img src="{{ product.image_set.first.picture.url }}" alt="">{% endif %}
+            <div class="prod-img-desc">Подпись</div>
+        </div>
+        <p class="prod-content">{{ product.content }}</p>
+    </div>
+</div>
+
+{% include 'nutrition/comments.html' %}
+
+
+{% if paginator.num_pages > 1 %}
+<hr>
+<div class="main-paginator">
+    {% if page_obj.has_previous %}
+    <div class="main-paginator-page"><a href="?page={{ page_obj.previous_page_number }}"><img
+            src="{% static 'img/left-arrow.png' %}" alt=""></a></div>
+    {% endif %}
+    {% for page in paginator.page_range %}
+    {% if page_obj.number == page %}
+    <div class="main-paginator-page">{{ page }}</div>
+    {% else %}
+    {% if page <= page_obj.number|add:2 and page >= page_obj.number|add:-2 %}
+    <div class="main-paginator-page"><a href="?page={{ page }}">{{ page }}</a></div>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <div class="main-paginator-page"><a href="?page={{ page_obj.next_page_number }}"><img
+            src="{% static 'img/right-arrow.png' %}" alt=""></a></div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

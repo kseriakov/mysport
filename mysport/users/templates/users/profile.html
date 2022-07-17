@@ -1,0 +1,57 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет | {{ block.super }}{% endblock %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li>Личный кабинет</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <h2>Настройки личного кабинета</h2>
+    <div class="options-profile">
+        <table class="options-user">
+            <tr class="first-name-user">
+                <td>Имя пользователя</td>
+                <td>{{ user.first_name }}</td>
+            </tr>
+            <tr class="last-name-user">
+                <td>Фамилия пользователя</td>
+                <td>{{ user.last_name }}</td>
+            </tr>
+            <tr class="email-user">
+                <td>Электронная почта</td>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr class="telegram-user">
+                <td>Telegram</td>
+                <td>{% if get_telegram %}Привязан{% else %}Аккаунт не привязан{% endif %}</td>
+            </tr>
+            <tr class="change-options">
+                <td colspan="2"><a href="{% url 'change_user' user.pk %}">Изменить данные пользователя</a></td>
+            </tr>
+            <tr class="change-telegram">
+                <td colspan="2"><a href="{% url 'add_telegram' user.username %}">
+                    {% if get_telegram %}
+                    Привязать другой аккаунт Telegram
+                    {% else %}
+                    Привязать аккаунт Telegram
+                    {% endif %}</a>
+                </td>
+            </tr>
+            <tr class="change-password">
+                <td colspan="2"><a href="{% url 'password_change' %}">Сменить пароль</a></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

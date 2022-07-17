@@ -1,0 +1,51 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Сообщения | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li>Сообщения</li>
+    </ul>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="title-chats">
+    <h2>Чаты</h2>
+    <h4><a href="#">Новый чат</a></h4>
+</div>
+<div class="article messages">
+    {% for to_user, ms in last_chats %}
+    <div class="sidebar-messages">
+        <p class="chats-sender">
+            <a href="{% url 'user_message_detail' to_user.pk %}">{{ to_user }}</a>
+        </p>
+        <p class="chats-time">{{ ms.create_at|date:"G:i" }}</p>
+        <p class="chats-time">{{ ms.create_at|date:"j b" }}</p>
+    </div>
+    <div class="table-of-message {% if not ms.read and ms.user_recipient == user %}not-read{% endif %}">
+        <p>
+            <a href="{% url 'user_message_detail' to_user.pk %}">
+                {% if not ms.read and ms.user_recipient == user %}
+                &#8226;
+                {% endif %}
+
+                {% if ms.user_sender == to_user %}
+                {{ to_user }}:
+                {% else %}
+                Вы:
+                {% endif %}
+                {{ ms.content|truncatechars:45 }}
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

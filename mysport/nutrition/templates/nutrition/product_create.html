@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ block.super }}{% endblock %}
+
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li>Добавить обзор</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="form-create">
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {% for field in form %}
+        <div class="form-field-product">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {{ form.non_field_errors }}
+        {{ form_img.as_p }}
+        <div class="btn-create">
+            <input type="submit" class="btn" value="Опубликовать">
+        </div>
+    </form>
+</div>
+{% endblock %}

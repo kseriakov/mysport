@@ -1,0 +1,9 @@
+{% load news_tag %}
+
+{% for news in news_list %}
+<div class="topic">
+    <p class="news-content">{{ news.content|delete_num }}</p>
+    <p><a href="{{ news.url }}"><small>Перейти</small></a></p>
+</div>
+{% endfor %}
+

@@ -1,0 +1,65 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load workout_tags %}
+
+{% block title %}Мои тренировки | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li>История тренировок</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="workout-history">
+    <h2>История ваших тренировок</h2>
+    <hr>
+    <div class="workout-year">
+        {% get_calendar user as calendar %}
+        {% for year, months in calendar %}
+        <h3>{{ year }}</h3>
+        <div class="workout-month-list">
+            {% for month, days in months %}
+            <div class="workout-month">
+                <div class="month-name">
+                    <h4><a href="{% url 'history_workout_month' year month %}" title="Перейти к истории">{{ month|name_month }}</a></h4>
+                </div>
+                <div class="month-days">
+                    {% get_weeks_days as weeks_days %}
+                    {% for day in weeks_days %}
+                    <div class="day">
+                        {{ day }}
+                    </div>
+                    {% endfor %}
+
+                    {% generate_day year month as gen %}
+                    {% for day in gen %}
+                    <div class="day">
+                        {% if day != 0 %}
+                        {% if day in days %}
+                        
+                        {% get_workouts_pk year month day as pk %}
+                        <a href="{% url 'history_workout_detail' year month day pk %}">{{ day }}</a>
+                        {% else %}
+                        {{ day }}
+                        {% endif %}
+                        {% else %}
+                            &nbsp
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+</div>
+
+
+{% endblock %}

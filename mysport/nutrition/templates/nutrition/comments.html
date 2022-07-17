@@ -1,0 +1,19 @@
+<div class="comments"></div>
+
+<div class="product-comments">
+    <h3>Комментарии</h3>
+    {% for comment in page_obj.object_list %}
+    <div class="product-comment">
+        <div class="user-sent-comment">
+            <p>{{ comment.user }}</p>
+            <p>comment added:<br>{{ comment.create_at|date:"j-m-Y" }}</p>
+        </div>
+        <div class="product-comment-text">
+            {{ comment.content }}
+        </div>
+    </div>
+    {% endfor %}
+
+   {% include 'nutrition/comment_form.html' %}
+
+</div>

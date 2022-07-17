@@ -1,0 +1,62 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Сообщения | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'user_message' %}">Сообщения</a></li>
+        <li>Сообщения от {{ to_user }}</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="article messages chat">
+    <div class="title-nav-chat">
+        <p class="nav-chat"><a href="#">вперед</a></p>
+        <h2 class="title-chats">Чат</h2>
+        <p class="nav-chat"><a href="#">назад</a></p>
+    </div>
+    <div class="sidebar-messages-detail">
+        {% for t_user, last_ms in cnt_list_new_message.1.items %}
+        <h4 class="new-messages-bar">Новые сообщения:</h4>
+        <div class="sender-info not-read">
+            <p class="chats-sender"><a href="{% url 'user_message_detail' t_user.pk %}">{{ t_user }}</a></p>
+            <!-- <p class="chats-time">{{ last_ms.content|truncatechars:15 }}</p> -->
+            <p class="chats-time">{{ last_ms.create_at|date:"G:i" }}</p>
+            <p class="chats-time">{{ last_ms.create_at|date:"j b" }}</p>
+        </div>
+        {% empty %}
+        <h5 class="new-messages-bar">Новых сообщений нет</h5>
+        {% endfor %}
+    </div>
+
+    <div class="chats">
+        <h3 class="user-recipient">{{ to_user }}</h3>
+        {% for ms in chat_messages %}
+
+        {% if ms.user_sender == user %}
+        <div class="table-of-message sender">
+            <p class="text-contnet">{{ ms.content }}</p>
+        </div>
+        <p class="time-message-sender">{{ ms.create_at|date:"j b. G:i" }}</p>
+
+        {% else %}
+        <div class="table-of-message recipient">
+            <p class="text-contnet">{{ ms.content }}</p>
+        </div>
+        <p class="time-message-recipient">{{ ms.create_at|date:"j b. G:i" }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+<div class="chat-add-message">
+    <div class="empty"></div>
+    <div class="form-create-message">
+        {% include 'nutrition/comment_form.html' %}
+    </div>
+</div>
+{% endblock %}
