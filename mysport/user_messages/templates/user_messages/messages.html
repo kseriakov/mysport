@@ -16,7 +16,7 @@
 {% block content %}
 <div class="title-chats">
     <h2>Чаты</h2>
-    <h4><a href="#">Новый чат</a></h4>
+    <h4><a href="{% url 'new_chat' %}">Новый чат</a></h4>
 </div>
 <div class="article messages">
     {% for to_user, ms in last_chats %}

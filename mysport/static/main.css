@@ -171,7 +171,7 @@ a,
 .site-name {
     font-style: italic;
     font-weight: 800;
-    font-size: 25px;
+    font-size: calc(10px + 1vw);
     transform: translateY(-3px);
 }
 
@@ -893,6 +893,9 @@ div.title-chats {
 
 .user-recipient {
     text-align: center;
+    margin: 0.5em 0;
+    margin-bottom: 2em;
+    padding: 0;
 }
 
 .time-message-sender, .time-message-recipient {
@@ -959,4 +962,57 @@ div.title-chats {
 
 .nav-chat:hover {
     box-shadow: 0.5px 1px 5px 1px rgb(193, 184, 166);
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.users-list {
+    width: 85%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.search-user {
+    margin: 2em auto;
+}
+
+.search-user input:first-of-type {
+    width: 12em;
+    margin-bottom: 0.5em;
+    cursor: text;
+}
+
+.search-user input:nth-last-of-type(1) {
+    transform: translateY(-1px);
+    margin-left: 1em;
+}
+
+.users-in-site {
+    border: 5px solid rgba(225, 222, 214, 0.475);
+    background-color: #fffefe;
+    box-shadow: 2px 3px 6px 4px rgb(181, 177, 171);
+    border-radius: 2em;
+    color: #15164c;
+    padding: 0.2em;
+}
+
+.table-of-users {
+    border-collapse: collapse; 
+    border: 15px solid #f5f2f8;
+	border-top: 5px solid #f5f2f8;
+    margin: 1em auto;
+    width: 95%;
+    font-size: calc(0.5em + 0.6vw);
+    
+}
+
+.cell-users {
+    background-color: rgba(228, 221, 240, 0.742);
+    border-bottom: 10px solid #f5f2f8;
+}
+
+th.cell-users {
+    background-color: #f5f2f8;
 }

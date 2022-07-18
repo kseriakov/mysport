@@ -16,7 +16,7 @@ class UserMessageChat(ListView, ProcessFormView, FormMixin):
     context_object_name = 'chat_messages'
     form_class = UserMessageCreateForm
     object = None
-    paginate_by = 5
+    paginate_by = 7
 
     def get_queryset(self):
         user = self.request.user
@@ -29,7 +29,6 @@ class UserMessageChat(ListView, ProcessFormView, FormMixin):
             # 'last_five_chats': last_five_chats.items(),
             'to_user': to_user
         }
-
         return chat_messages_list
 
     def get_success_url(self):
@@ -51,6 +50,7 @@ class UserMessageChat(ListView, ProcessFormView, FormMixin):
 
     def paginate_queryset(self, queryset, page_size):
         objects = super().paginate_queryset(queryset, page_size)
+        # Изменяем порядок queryset'a, так как он приходит после reverse
         object_list = objects[2][:]
         return objects[0], objects[1], object_list[::-1], objects[3]
 
@@ -77,3 +77,22 @@ class UserMessageList(ListView):
                 last_chats[key_user] = ms
 
         return list(last_chats.items())
+
+
+class UsersListView(ListView):
+    model = get_user_model()
+    template_name = 'user_messages/users_list.html'
+    paginate_by = 10
+    context_object_name = 'users'
+
+    def get_queryset(self):
+        qs = super(UsersListView, self).get_queryset().order_by('username')
+        queryset = qs[:]
+        if 'search_user' in self.request.GET:
+            search_user = self.request.GET.get('search_user')
+            filter_qs = qs.filter(username__icontains=search_user)
+            queryset = filter_qs[:]
+
+        return queryset
+
+

@@ -16,9 +16,19 @@
 {% block content %}
 <div class="article messages chat">
     <div class="title-nav-chat">
-        <p class="nav-chat"><a href="#">вперед</a></p>
+        <p class="nav-chat {% if not page_obj.has_previous %}hidden{% endif %}">
+            {% if page_obj.has_previous %}
+            <a href="{% url 'user_message_detail' to_user.pk %}?page={{ page_obj.previous_page_number }}">
+                вперед</a>
+            {% endif %}
+        </p>
         <h2 class="title-chats">Чат</h2>
-        <p class="nav-chat"><a href="#">назад</a></p>
+        <p class="nav-chat {% if not page_obj.has_next %}hidden{% endif %}">
+            {% if page_obj.has_next %}
+            <a href="{% url 'user_message_detail' to_user.pk %}?page={{ page_obj.next_page_number }}">
+                назад</a>
+            {% endif %}
+        </p>
     </div>
     <div class="sidebar-messages-detail">
         {% for t_user, last_ms in cnt_list_new_message.1.items %}
@@ -50,6 +60,8 @@
         </div>
         <p class="time-message-recipient">{{ ms.create_at|date:"j b. G:i" }}</p>
         {% endif %}
+        {% empty %}
+        <h4 class="user-recipient">Напишите что-нибудь</h4>
         {% endfor %}
     </div>
 </div>

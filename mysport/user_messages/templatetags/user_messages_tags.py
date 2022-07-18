@@ -13,7 +13,6 @@ def show_new_messages(context):
     # Помечаем сообщения как прочитанные, при просмотре чата
     if 'chat_messages' in context:
         chat_messages = context.get('chat_messages')
-        print(chat_messages)
         size = len(chat_messages)
         # Начинаем перебирать с конца, чтобы не идти по старым, просмотренным сообщениям
         for i in range(size - 1, -1, -1):

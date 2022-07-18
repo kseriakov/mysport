@@ -1,0 +1,63 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Новый чат | {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs-list">
+    <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'user_message' %}">Сообщения</a></li>
+        <li>Новый чат</li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="article">
+    <div class="users-list">
+        <form action="" method="get">
+            {% csrf_token %}
+            <div class="search-user">
+                <label for="search-user">Найти пользователя:</label>
+                <input type="text" id="search-user" name="search_user">
+                <input type="submit" class="btn" value="Найти">
+            </div>
+        </form>
+        <div class="users-in-site">
+            <table class="table-of-users">
+                <tr class="row-users">
+                    <th class="cell-users">Логин</th>
+                    <th class="cell-users">Имя пользователя</th>
+                    <th class="cell-users">Фамилия пользователя</th>
+                </tr class="row-users">
+                {% for usr in users %}
+                {% if usr != user %}
+                <tr>
+                    <td class="cell-users">
+                        <a href="{% url 'user_message_detail' usr.pk %}">{{ usr }}</a>
+                    </td>
+                    <td class="cell-users">
+                        {% if usr.first_name %}
+                        {{ usr.first_name }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td class="cell-users">
+                        {% if usr.last_name %}
+                        {{ usr.last_name }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
