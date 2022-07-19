@@ -32,8 +32,8 @@ class ProductListView(ListView, AddRatio):
         return self.render_to_response(self.get_context_data(object_list=self.object_list, **kwargs))
 
     def post(self, request, **kwargs):
-        self.object_list = self.get_queryset()
         self.add_ratio(request)
+        self.object_list = self.get_queryset()
         return self.render_to_response(self.get_context_data(object_list=self.object_list, **kwargs))
 
     def get_queryset(self):

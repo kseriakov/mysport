@@ -24,7 +24,7 @@ def get_score_user(context):
         if qs_user_ratio:
             user_ratio = qs_user_ratio.last()
             res.setdefault(product.pk, user_ratio.score)
-    print(res)
+
     return res
 
 

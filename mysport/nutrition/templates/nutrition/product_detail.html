@@ -19,7 +19,10 @@
 {% get_score_user as list_score %}
 <div class="article">
     <div class="one-product">
-        <p>Автор: <a href="#">{{ product.user }}</a></p>
+        <p>Автор: <a href="
+            {% if product.user != user %}
+            {% url 'user_message_detail' product.user.pk %}
+            {% else %}#{% endif %}">{{ product.user }}</a></p>
         <p><small>Добавлено: {{ product.create_at|date:"j-m-Y"}}</small></p>
         <h2 class="product-name">{{ product.category }}</h2>
         <div class="product-ratio">
@@ -43,7 +46,7 @@
                             <option {% if list_score|get_dict_object:pk == 5 %}selected{% endif %} value="5">5</option>
                         </select>
                         {% endwith %}
-                        <input type="hidden" name="product_obj" value="{{ product }}">
+                        <input type="hidden" name="prod_pk" value="{{ product.pk }}">
                         <input type="submit" class="btn" value="Отправить">
                     </label>
                 </form>

@@ -40,7 +40,10 @@
 {% for prod in products %}
 <div class="article">
     <div class="one-product">
-            <p>Автор: <a href="#">{{ prod.user }}</a></p>
+            <p>Автор: <a href="
+                {% if prod.user != user %}
+                {% url 'user_message_detail' prod.user.pk %}
+                {% else %}#{% endif %}">{{ prod.user }}</a></p>
             <p><small>Добавлено: {{ prod.create_at|date:"j-m-Y"}}</small></p>
             <h2 class="product-name"><a href="{{ prod.get_absolute_url }}?page=1">{{ prod.category }}</a></h2>
             <div class="product-ratio">
