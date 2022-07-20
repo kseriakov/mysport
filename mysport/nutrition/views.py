@@ -3,11 +3,14 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 from .mixins import AddRatio
 from .models import *
 from .forms import *
 from photo.views import ImageCreateView
+from .serializers import *
 
 
 class ProductListView(ListView, AddRatio):
@@ -126,6 +129,16 @@ class ProductCreateView(CreateView):
 class CommentsCreate(CreateView):
     form_class = CommentCreateForm
 
+
+
+# DRF
+# Самый простой вариант
+@csrf_exempt
+def nutrition_list(request):
+    if request.method == 'GET':
+        products = Product.objects.all()
+        serailizer = ProductSerializer(products, many=True)
+        return JsonResponse(serailizer.data, safe=False)
 
 
 
