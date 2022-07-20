@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'news.apps.NewsConfig',
     'workout.apps.WorkoutConfig',
     'user_messages.apps.UserMessagesConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

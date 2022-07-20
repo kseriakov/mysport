@@ -39,8 +39,9 @@
     </header>
 
     <div class="main">
-
+        {% if user.is_authenticated %}
         {% show_new_messages as cnt_list_new_message %}
+        {% endif %}
 
         <div class="main-content">
             {% block breadcrumbs %}{% endblock %}

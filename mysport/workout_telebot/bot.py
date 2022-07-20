@@ -10,7 +10,7 @@ import secrets
 
 __all__ = ['add_new_workout', ]
 
-_new_route = Path.cwd()
+_new_route = str(Path(__file__).resolve().parent.parent)
 # Добавляем в пути для поиска модулей питона текущую директорию
 sys.path.append(_new_route)
 
