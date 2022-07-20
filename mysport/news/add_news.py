@@ -2,7 +2,9 @@ import os
 import sys
 from pathlib import Path
 
-_new_route = Path.cwd()
+#Без str в Линукс была ошибка
+_new_route = str(Path(__file__).resolve().parent.parent)
+
 # Добавляем в пути для поиска модулей питона текущую директорию
 sys.path.append(_new_route)
 

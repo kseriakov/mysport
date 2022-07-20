@@ -4,10 +4,27 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from rest_framework.parsers import JSONParser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework import mixins
+from rest_framework import generics
+from rest_framework import permissions
+from rest_framework import authentication
+from rest_framework.renderers import StaticHTMLRenderer
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .mixins import AddRatio
 from .models import *
 from .forms import *
 from photo.views import ImageCreateView
+from .serializers import *
+from .permissions import *
 
 
 class ProductListView(ListView, AddRatio):
@@ -46,14 +63,6 @@ class ProductListView(ListView, AddRatio):
         if not context.get('title'):
             context['title'] = 'My Питание'
         return context
-
-    # def add_ratio(self, request):
-    #     pk = request.POST.get('prod_pk')
-    #     product = Product.objects.get(pk=pk)
-    #     score = request.POST.get('add-score')
-    #     if product and score:
-    #         Ratio.objects.update_or_create(product=product, maker=product.maker, user=request.user,
-    #                                        defaults={'score': score})
 
 
 class ProductDetailView(DetailView, AddRatio):
@@ -128,10 +137,250 @@ class CommentsCreate(CreateView):
 
 
 
+# DRF
+# Самый простой вариант
+@csrf_exempt
+def nutrition_list(request):
+    if request.method == 'GET':
+        products = Product.objects.all()
+        serailizer = ProductSerializer(products, many=True)
+        return JsonResponse(serailizer.data, safe=False)
+
+    if request.method == 'POST':
+        # Парсим request - приходят данные в JSON формате
+        data = JSONParser().parse(request)
+        # Десериализация
+        product = ProductSerializer(data=data)
+        if product.is_valid():
+            product.save()
+            return JsonResponse(product.data, status=201)
+        return JsonResponse(product.errors, status=400)
 
 
+@api_view(['GET', 'POST'])
+def nutrition_list(request, format=None):  # format - для суффиксов к url адресам
+    if request.method == 'GET':
+        products = Product.objects.all()
+        serailizer = ProductSerializer(products, many=True)
+        # Используем класс Response из DRF
+        return Response(serailizer.data)
+
+    if request.method == 'POST':
+        # Десериализация, здесь доступен новый объект request, имеющий атрибут data
+        # парсить request - не нужно
+        product = ProductSerializer(data=request.data)
+        if product.is_valid():
+            product.save()
+            # Используем статусы состояний DRF, так рекомендуется
+            return Response(product.data, status=status.HTTP_201_CREATED)
+        return Response(product.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET', 'PUT', 'DELETE'])
+def nutrition_detail(request, pk, format=None): # format - для суффиксов к url адресам
+
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serailizer = ProductSerializer(product)
+        return Response(serailizer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PUT':
+        prod = ProductSerializer(product, data=request.data)
+        if prod.is_valid():
+            prod.save()
+            return Response(prod.data, status=status.HTTP_201_CREATED)
+        return Response(prod.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == "DELETE":
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Далее переписываем представления на основе классов
 
+class ProductListAPIView(APIView):
+    
+    # Методы определяются как и в случае api_view
+    def get(self, request, form=None):
+        products = Product.objects.all()
+        serailizer = ProductSerializer(products, many=True)
+        return Response(serailizer.data)
+
+    def post(self, request, form=None):
+        product = ProductSerializer(data=request.data)
+        if product.is_valid():
+            product.save()
+            # Используем статусы состояний DRF, так рекомендуется
+            return Response(product.data, status=status.HTTP_201_CREATED)
+        return Response(product.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductDetailAPIView(APIView):
+
+    def get_object(self, pk):
+        try:
+            object = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            raise Http404
+        return object
+
+    def get(self, request, pk, format=None):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, pk, format=None):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        product = self.get_object(pk)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Далее убираем дублирование кода с помощью миксинов
+# GenericAPIView - наследуется от APIView, базовый класс, для работы с queryset
+# и serializer
+# Миксины реализуют обработку get, post запросов
+class ProductListAPIView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    # Разрешаем методы отработки запросов
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)  # list - вывод записей
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)  # create - создание записи  
+
+
+class ProductDetailAPIView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    # Разрешаем методы отработки запросов
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)  # retrieve - одна запись
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)  
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)          
+
+
+# Существуют общие представления включающие вышеприведенный функционал
+# Product API
+
+class ProductListAPIView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    # Аутентификация
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,]
+
+    # При создании записи, автор добавляется автоматически
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    # разрешили доступ только для аут. по токенам (простые или JWT)
+    # те кто зашел по кукам, доступа иметь не будут
+
+    # authentication_classes = [
+    #     authentication.TokenAuthentication,
+    #     JWTAuthentication,
+    # ]
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsOwnerUserOrReadOnly # ограничение на действия только владельцем
+    ]
+
+
+class ProdutsListHighlightsAPIView(generics.GenericAPIView):
+    queryset = Product.objects.all()
+    renderer_classes = [StaticHTMLRenderer]
+
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()
+        return Response(product)
+
+
+# Maker API
+class MakerListAPIView(generics.ListCreateAPIView):
+    queryset = Maker.objects.all()
+    serializer_class = MakerSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+class MakerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Maker.objects.all()
+    serializer_class = MakerSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+# Country API
+class CountryListAPIView(generics.ListCreateAPIView):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+class CountryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]  
+
+
+# Category API
+class CategoryListAPIView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]  

@@ -9,10 +9,17 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView, CreateView
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+
+from rest_framework import generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from .link_workouts import *
 from .models import *
 from .forms import *
+from .serializers import *
 
 
 def home(request):
@@ -86,3 +93,27 @@ class UserChangeView(UpdateView):
 class PasswdChangeView(PasswordChangeView):
     template_name = 'users/password_change.html'
 
+
+# DRF
+
+# начальная точка входа в api
+@api_view(['GET'])
+def api_root(request, format=None):
+    # возвращаем список url адресов, на входе в api
+    return Response({
+        reverse('products-list', request=request, format=None),
+        reverse('users-list', request=request, format=None),
+        reverse('makers-list', request=request, format=None),
+        reverse('countries-list', request=request, format=None),
+        reverse('categories-list', request=request, format=None),
+    })
+
+
+class UserListAPIView(generics.ListAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetailAPIView(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
