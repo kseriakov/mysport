@@ -9,10 +9,14 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView, CreateView
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+
+from rest_framework import generics
 
 from .link_workouts import *
 from .models import *
 from .forms import *
+from .serializers import *
 
 
 def home(request):
@@ -86,3 +90,14 @@ class UserChangeView(UpdateView):
 class PasswdChangeView(PasswordChangeView):
     template_name = 'users/password_change.html'
 
+
+# DRF
+
+class UserListAPIView(generics.ListAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetailAPIView(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer

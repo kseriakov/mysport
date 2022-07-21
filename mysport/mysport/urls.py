@@ -25,6 +25,7 @@ urlpatterns = [
     path('nutrition/', include('nutrition.urls')),
     path('workout/', include('workout.urls')),
     path('messages/', include('user_messages.urls')),
+    path('api-auth/', include('rest_framework.urls')), # страница авторизации в DRF
 ]
 
 

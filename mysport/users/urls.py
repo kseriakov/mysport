@@ -2,6 +2,9 @@ from django.contrib.auth.views import PasswordResetDoneView, PasswordResetConfir
 from django.urls import path, include
 from .views import *
 
+from rest_framework.authtoken import views
+
+
 urlpatterns = [
     path('', home, name='home'),
     path('profile/', profile, name='profile'),
@@ -17,3 +20,12 @@ urlpatterns = [
     path('add-telegram/<str:user_name>/', add_telegram, name='add_telegram'),
 
 ]
+
+urlpatterns_api = [
+    path('users/api-view/', UserListAPIView.as_view()),
+    path('users/api-view/<int:pk>', UserDetailAPIView.as_view()),
+    path('api-token-auth/', views.obtain_auth_token)
+    
+]
+
+urlpatterns += urlpatterns_api
