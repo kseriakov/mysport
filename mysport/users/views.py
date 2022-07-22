@@ -12,6 +12,9 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 
 from rest_framework import generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from .link_workouts import *
 from .models import *
@@ -92,6 +95,19 @@ class PasswdChangeView(PasswordChangeView):
 
 
 # DRF
+
+# начальная точка входа в api
+@api_view(['GET'])
+def api_root(request, format=None):
+    # возвращаем список url адресов, на входе в api
+    return Response({
+        reverse('products-list', request=request, format=None),
+        reverse('users-list', request=request, format=None),
+        reverse('makers-list', request=request, format=None),
+        reverse('countries-list', request=request, format=None),
+        reverse('categories-list', request=request, format=None),
+    })
+
 
 class UserListAPIView(generics.ListAPIView):
     queryset = get_user_model().objects.all()

@@ -15,6 +15,7 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import authentication
+from rest_framework.renderers import StaticHTMLRenderer
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -287,6 +288,7 @@ class ProductDetailAPIView(
 
 
 # Существуют общие представления включающие вышеприведенный функционал
+# Product API
 
 class ProductListAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
@@ -306,10 +308,11 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     # разрешили доступ только для аут. по токенам (простые или JWT)
     # те кто зашел по кукам, доступа иметь не будут
-    authentication_classes = [
-        authentication.TokenAuthentication,
-        JWTAuthentication,
-    ]
+
+    # authentication_classes = [
+    #     authentication.TokenAuthentication,
+    #     JWTAuthentication,
+    # ]
 
     permission_classes = [
         permissions.IsAuthenticated,
@@ -317,7 +320,67 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     ]
 
 
+class ProdutsListHighlightsAPIView(generics.GenericAPIView):
+    queryset = Product.objects.all()
+    renderer_classes = [StaticHTMLRenderer]
+
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()
+        return Response(product)
 
 
+# Maker API
+class MakerListAPIView(generics.ListCreateAPIView):
+    queryset = Maker.objects.all()
+    serializer_class = MakerSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
 
+class MakerDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Maker.objects.all()
+    serializer_class = MakerSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+# Country API
+class CountryListAPIView(generics.ListCreateAPIView):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+class CountryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]  
+
+
+# Category API
+class CategoryListAPIView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]  
