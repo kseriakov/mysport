@@ -24,7 +24,7 @@ urlpatterns = [
 urlpatterns_api = [
     path('users/api-view/', UserListAPIView.as_view()),
     path('users/api-view/<int:pk>', UserDetailAPIView.as_view()),
-    path('api-token-auth/', views.obtain_auth_token)
+    path('api-token-auth/', views.obtain_auth_token) # получение токена (для заголовка запроса)
     
 ]
 

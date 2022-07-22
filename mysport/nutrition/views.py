@@ -14,6 +14,9 @@ from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework import authentication
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .mixins import AddRatio
 from .models import *
@@ -300,8 +303,16 @@ class ProductListAPIView(generics.ListCreateAPIView):
 class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    # разрешили доступ только для аут. по токенам (простые или JWT)
+    # те кто зашел по кукам, доступа иметь не будут
+    authentication_classes = [
+        authentication.TokenAuthentication,
+        JWTAuthentication,
+    ]
+
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
+        permissions.IsAuthenticated,
         IsOwnerUserOrReadOnly # ограничение на действия только владельцем
     ]
 

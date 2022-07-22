@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'workout.apps.WorkoutConfig',
     'user_messages.apps.UserMessagesConfig',
     'rest_framework',
-    # 'rest_framework.authtoken',  # для аутентификации по токенам
+    'rest_framework.authtoken',  # для аутентификации по токенам - стадартная библиотека
+    'djoser', # надстройка над стандартной аут. по токенам
 ]
 
 MIDDLEWARE = [
@@ -63,18 +64,25 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'mysport.urls'
 
 
-# REST_FRAMEWORK = {
-#     # класс аутентификации по умолчанию (токены)
-#     "DEFAULT_AUTHENTICATION_CLASSES": [
+REST_FRAMEWORK = {
+    # классы аутентификации по умолчанию 
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         # генерируется для каждого пользователя токен, затем, передав
         # его в заголовках запроса Authorization - происходит аутентификация
-#         "rest_framework.authentication.TokenAuthentication",
-#     ],
-#     # по умолчанию для пользователей разрешено все
-#     "DEFAULT_PERMISSION_CLASSES": [
-#         "rest_framework.permissions.AllowAny",
-#     ]
-# }
+        "rest_framework.authentication.TokenAuthentication", # разрешили аут. по токенам
+
+        # JWT токены
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        
+        # ниже оставили аут. по сессиям и кукам она по дефолту
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    # по умолчанию для пользователей разрешено все
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ]
+}
 
 TEMPLATES = [
     {
