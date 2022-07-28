@@ -1,4 +1,7 @@
-# Django #
+# settings.py on production
+mysport/mysport/settings.py
+
+#Django #
 *.log
 *.pot
 *.pyc
