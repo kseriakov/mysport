@@ -15,6 +15,9 @@ from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework import permissions
 
 from .link_workouts import *
 from .models import *
@@ -117,3 +120,12 @@ class UserListAPIView(generics.ListAPIView):
 class UserDetailAPIView(generics.RetrieveAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
+
+
+# Завершая, используем ViewSets
+
+# Заменяет два класса выше, обрабатывает все методы запросов
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]

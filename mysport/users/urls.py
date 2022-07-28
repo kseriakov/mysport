@@ -6,8 +6,8 @@ from .views import *
 urlpatterns = [
     path('', home, name='home'),
     path('profile/', profile, name='profile'),
-    path('logout/', UserLogout.as_view(), name='logout'),
-    path('login/', UserLogin.as_view(), name='login'),
+    path('logout/', UserLogout.as_view(), name='site_logout'),
+    path('login/', UserLogin.as_view(), name='site_login'),
     path('register/', UserCreate.as_view(), name='register'),
     path('profile/change/user/<int:pk>', UserChangeView.as_view(), name='change_user'),
     path('reset-password/', PasswordReset.as_view(), name='reset_password'),
@@ -18,3 +18,13 @@ urlpatterns = [
     path('add-telegram/<str:user_name>/', add_telegram, name='add_telegram'),
 
 ]
+
+
+# Создаем вручную маршруты для ViewSet
+users_list = UserViewSet.as_view({
+    'get': 'list',  # get запрос будет отрабатывать стандартный метод UserViewSet - list
+})
+
+users_detail = UserViewSet.as_view({
+    'get': 'retrieve',
+})

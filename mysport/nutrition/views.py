@@ -16,6 +16,8 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework.renderers import StaticHTMLRenderer
+from rest_framework.decorators import action
+from rest_framework import viewsets
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -136,7 +138,6 @@ class CommentsCreate(CreateView):
     form_class = CommentCreateForm
 
 
-
 # DRF
 # Самый простой вариант
 @csrf_exempt
@@ -157,6 +158,7 @@ def nutrition_list(request):
         return JsonResponse(product.errors, status=400)
 
 
+# Представления на основе функций
 @api_view(['GET', 'POST'])
 def nutrition_list(request, format=None):  # format - для суффиксов к url адресам
     if request.method == 'GET':
@@ -250,7 +252,7 @@ class ProductDetailAPIView(APIView):
 # Далее убираем дублирование кода с помощью миксинов
 # GenericAPIView - наследуется от APIView, базовый класс, для работы с queryset
 # и serializer
-# Миксины реализуют обработку get, post запросов
+# Миксины реализуют обработку get, post и.т.д. запросов
 class ProductListAPIView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -316,7 +318,7 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     permission_classes = [
         permissions.IsAuthenticated,
-        IsOwnerUserOrReadOnly # ограничение на действия только владельцем
+        IsOwnerUserOrReadOnly  # ограничение на действия только владельцем
     ]
 
 
@@ -383,4 +385,57 @@ class CategoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     permission_classes = [
         permissions.IsAuthenticated,
-    ]  
+    ]
+
+
+# Используем ViewSets, заменяя два класса на каждую сущность, одним
+
+# Product
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    # Аутентификация
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerUserOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    # дополнительный метод, которому будет присвоен маршрут в API (по url будет вызываться)
+    @action(methods=['GET'], detail=True,
+            url_path='highlight', renderer_classes=[StaticHTMLRenderer], url_name='highlight')
+    def get_highlight(self, request, *args, **kwargs):
+        product = self.get_object()
+        return Response(product)
+
+
+# Maker
+class MakerViewSet(viewsets.ModelViewSet):
+    queryset = Maker.objects.all()
+    serializer_class = MakerSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+# Country
+class CountryViewSet(viewsets.ModelViewSet):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+
+# Category
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]

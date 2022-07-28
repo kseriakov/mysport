@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-{% get_score_user as list_score %}
+
 <div class="article">
     <div class="one-product">
         <p>Автор: <a href="
@@ -27,6 +27,8 @@
         <h2 class="product-name">{{ product.category }}</h2>
         <div class="product-ratio">
             <small>Рейтинг товара: {% get_avg_ratio product %}</small>
+            {% if user.is_authenticated %}
+            {% get_score_user as list_score %}
             <div class="set-score">
                 <form action="" method="post">
                     {% csrf_token %}
@@ -51,6 +53,7 @@
                     </label>
                 </form>
             </div>
+            {% endif %}
         </div>
         <h3 class="maker-name">Производитель: {{ product.maker }}</h3>
         <div class="maker-ratio">
@@ -66,8 +69,8 @@
     </div>
 </div>
 
-{% include 'nutrition/comments.html' %}
 
+{% include 'nutrition/comments.html' %}
 
 {% if paginator.num_pages > 1 %}
 <hr>

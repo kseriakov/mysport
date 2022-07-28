@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render
 
@@ -10,13 +11,15 @@ from .models import *
 from .forms import *
 
 
-class UserMessageChat(ListView, ProcessFormView, FormMixin):
+class UserMessageChat(LoginRequiredMixin, ListView, ProcessFormView, FormMixin):
     model = UserMessage
     template_name = 'user_messages/messages_detail.html'
     context_object_name = 'chat_messages'
     form_class = UserMessageCreateForm
     object = None
     paginate_by = 7
+    login_url = reverse_lazy('site_login')
+
 
     def get_queryset(self):
         user = self.request.user

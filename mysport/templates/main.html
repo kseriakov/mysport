@@ -29,9 +29,9 @@
             <div class="header-user">
                 <div class="user-login">
                     {% if user.is_authenticated %}
-                    <h3><a href="{% url 'logout' %}">Logout</a></h3>
+                    <h3><a href="{% url 'site_logout' %}">Logout</a></h3>
                     {% else %}
-                    <h3><a href="{% url 'register' %}">Register | </a><a href="{% url 'login' %}">Login</a></h3>
+                    <h3><a href="{% url 'register' %}">Register | </a><a href="{% url 'site_login' %}">Login</a></h3>
                     {% endif %}
                 </div>
             </div>
@@ -76,7 +76,6 @@
                             </a>
                         </div>
                     </li>
-                    {% endif %}
                     <li class="menu-item">
                         <div class="menu-item-img">
                             <a href="{% url 'history_workout' %}"><img src="{% static 'img/running.png' %}" alt=""></a>
@@ -85,6 +84,7 @@
                             <a href="{% url 'history_workout' %}">MYSport</a>
                         </div>
                     </li>
+                    {% endif %}
                     <li class="menu-item">
                         <div class="menu-item-img">
                             <a href="#"><img src="{% static 'img/nutrition.png' %}" alt=""></a>

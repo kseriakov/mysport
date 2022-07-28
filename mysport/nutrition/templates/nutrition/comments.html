@@ -13,7 +13,8 @@
         </div>
     </div>
     {% endfor %}
-
-   {% include 'nutrition/comment_form.html' %}
+    {% if user.is_authenticated %}
+    {% include 'nutrition/comment_form.html' %}
+    {% endif %}
 
 </div>

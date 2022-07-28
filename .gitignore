@@ -1,5 +1,5 @@
 # settings.py on production #
-settings.py
+#settings.py
 
 #Django #
 *.log
