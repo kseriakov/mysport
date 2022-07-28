@@ -36,7 +36,7 @@
         </label>
     </form>
 </div>
-{% get_score_user as list_score %}
+
 {% for prod in products %}
 <div class="article">
     <div class="one-product">
@@ -48,6 +48,8 @@
             <h2 class="product-name"><a href="{{ prod.get_absolute_url }}?page=1">{{ prod.category }}</a></h2>
             <div class="product-ratio">
                 <small>Рейтинг товара: {% get_avg_ratio prod %}</small>
+                {% if user.is_authenticated %}
+                {% get_score_user as list_score %}
                 <div class="set-score">
                     <form action="" method="post">
                         {% csrf_token %}
@@ -72,6 +74,7 @@
                         </label>
                     </form>
                 </div>
+                {% endif %}
             </div>
         
         <h3 class="maker-name">Производитель: {{ prod.maker }}</h3>

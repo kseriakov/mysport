@@ -19,11 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
 # перепишем класс, представляя отношении с помощью гиперссылок
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     product_set = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='product-detail')  
+        many=True, read_only=True, view_name='products-detail')
 
     class Meta:
         model = get_user_model()
         fields = ['url', 'id', 'username', 'product_set', ]
         extra_kwargs = {
-            'url': {'view_name': 'users_detail'}
+            'url': {'view_name': 'users-detail'}
         }

@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'user_messages.apps.UserMessagesConfig',
     'rest_framework',
     'rest_framework.authtoken',  # для аутентификации по токенам - стадартная библиотека
-    'djoser', # надстройка над стандартной аут. по токенам
+    'djoser',  # надстройка над стандартной аут. по токенам
 ]
 
 MIDDLEWARE = [
@@ -81,7 +81,9 @@ REST_FRAMEWORK = {
     # по умолчанию для пользователей разрешено все
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
 }
 
 TEMPLATES = [
