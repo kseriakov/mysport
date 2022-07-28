@@ -1,5 +1,5 @@
-# settings.py on production
-mysport/mysport/settings.py
+# settings.py on production #
+settings.py
 
 #Django #
 *.log
