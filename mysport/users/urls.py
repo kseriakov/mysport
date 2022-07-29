@@ -15,7 +15,7 @@ urlpatterns = [
     path('reset-password-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset-password-complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('profile/change/password/', PasswdChangeView.as_view(), name='password_change'),
-    path('add-telegram/<str:user_name>/', add_telegram, name='add_telegram'),
+    path('add-telegram/<str:user_name>/', AddTelegram.as_view(), name='add_telegram'),
 
 ]
 

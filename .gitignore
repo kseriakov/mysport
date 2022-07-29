@@ -1,7 +1,6 @@
-# settings.py on production #
 settings.py
 
-#Django #
+# Django #
 *.log
 *.pot
 *.pyc
