@@ -498,7 +498,7 @@ table {
     transform: translateY(7px);
 }
 
-ul.messages {
+ul.info-message {
     text-align: center;
     list-style-type: none;
     font-weight: 700;
@@ -506,7 +506,7 @@ ul.messages {
 }
 
 ul .error,
-ul.errorlist {
+ul .errorlist {
     color: rgb(145, 11, 51);
 }
 

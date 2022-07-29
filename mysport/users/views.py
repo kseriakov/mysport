@@ -1,8 +1,8 @@
 from django.contrib.auth import logout
 from django.contrib.auth.forms import UserChangeForm
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView, LoginView, PasswordResetView, PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import ModelForm
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -10,6 +10,8 @@ from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView, CreateView
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import FormMixin, FormView
 
 from rest_framework import generics
 from rest_framework.decorators import api_view
@@ -34,28 +36,34 @@ def profile(request):
     return render(request, 'users/profile.html', context={'get_telegram': get_telegram})
 
 
-def add_telegram(request, user_name):
-    if request.method == 'POST':
-        secure_code = request.POST.get('secure-code')
-        if qs := SecureCode.objects.filter(code=secure_code):
+class AddTelegram(FormView, LinkWorkouts):
+    form_class = SecureCodeForm
+    template_name = 'users/add_telegram.html'
+    success_url = reverse_lazy('profile')
+
+    def form_valid(self, form):
+        self._code = form.cleaned_data['code']
+        self.add_telegram()
+        return super().form_valid(form)
+
+    def add_telegram(self):
+        if qs := SecureCode.objects.filter(code=self._code):
             # Идет перепревязка на другой аккаунт в телеграм
-            if qs_sc := SecureCode.objects.filter(user=request.user):
+            if qs_sc := SecureCode.objects.filter(user=self.request.user):
                 sc = qs_sc.last()
                 sc.user = None
                 sc.save()
             obj = qs.last()
-            obj.user = request.user
+            obj.user = self.request.user
             obj.save()
 
             # Далее пробежимся по всем workouts для пользователя, чтобы добавить в них user и telegram_id
-            link_data_user(sec_code_obj=obj)
+            # а также слить дни, где были добавлены тренировки из телеги и сайта одновременно
+            self.link_data_user(sec_code_obj=obj)
 
-            messages.add_message(request, messages.SUCCESS, 'Telegram-bot успешно привязан')
-            return redirect('profile')
+            messages.add_message(self.request, messages.SUCCESS, 'Telegram-bot успешно привязан')
         else:
-            messages.add_message(request, messages.ERROR, 'Введен неверный код подтверждения')
-
-    return render(request, 'users/add_telegram.html')
+            messages.add_message(self.request, messages.ERROR, 'Введен неверный код подтверждения')
 
 
 class UserLogout(LogoutView):

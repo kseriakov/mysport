@@ -21,7 +21,12 @@
         <h3>Введите ваш секретный код из Telegram bot'а:</h3>
         <div class="secure-code">
             <div class="input-secure-code">
-                <input type="text" name="secure-code">
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                {{ field.errors }}
+                {{ field }}
+                {% endfor %}
+                <!--                <input type="text" name="secure-code">-->
                 <input type="submit" class="add-secure-code btn" value="Привязать">
             </div>
         </div>
