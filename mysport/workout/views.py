@@ -11,8 +11,13 @@ import calendar
 from django.views.generic.base import TemplateResponseMixin, TemplateView, ContextMixin
 from django.views.generic.edit import FormMixin, ProcessFormView, ModelFormMixin
 
+from rest_framework import viewsets
+from rest_framework import permissions
+
 from workout_telebot.bot import add_new_workout
 from .forms import *
+from .serializers import WorkoutSerializer
+from users.link_workouts import LinkWorkouts
 
 
 class WorkoutCreateView(FormView):
@@ -67,7 +72,7 @@ class WorkoutListMonthView(ListView):
         return qs
 
 
-class WorkoutUpdateView(FormMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
+class WorkoutUpdateView(FormMixin, TemplateResponseMixin, ProcessFormView):
     template_name = 'workout/workout_detail.html'
     form_class = WorkoutFormUpdate
 
@@ -116,45 +121,25 @@ class WorkoutUpdateView(FormMixin, TemplateResponseMixin, ContextMixin, ProcessF
         context['w_date'] = obj.date
         return context
 
-# ВЫШЕ сделали с одним классом
-# class WorkoutUpdateView(TemplateView):
-#     template_name = 'workout/workout_detail.html'
-#
-#     def post(self, request, *args, **kwargs):
-#         form = self.get_form()
-#         if form.is_valid():
-#             return self.form_valid(form)
-#         else:
-#             return self.form_invalid(form)
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(WorkoutUpdateView, self).get_context_data(**kwargs)
-#         # Передаем pk в форму OneExerciseUpdate для выборки одной записи
-#         pk = self.kwargs.get('pk')
-#         # Получаем объект формы
-#         obj_form = OneExerciseUpdate(request=self.request, pk=pk)
-#         # Получаем форму с заполненными данными
-#         self.form = obj_form.get_form()
-#         # Передаем в шаблон
-#         context['forms'] = self.form
-#         # Также добавляем дату тренировки
-#         context.update(obj_form.extra_context)
-#         return context
-#
-#
-# class OneExerciseUpdate(FormMixin, ProcessFormView,):  # FormMixin - для рендеринга формы, ProcessFormView - обработка запросов
-#     form_class = WorkoutFormUpdate
-#
-#     def get_form(self, form_class=None):
-#         # Формируем список форм, одна форма - на одно упражнение
-#         form_list = []
-#         if form_class is None:
-#             form_class = self.get_form_class()
-#
-#         obj = Workout.objects.get(pk=self.pk)
-#         # Передаем дату в extra_context, чтобы потом вывести в шаблон
-#         self.extra_context = {'w_date': obj.date}
-#         list_field = tuple(obj.content.values())
-#         for field in list_field:
-#             form_list.append(form_class(initial={'exercise': field}))
-#         return form_list
+
+# DRF
+class WorkoutViewSet(viewsets.ModelViewSet, LinkWorkouts):
+    serializer_class = WorkoutSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Workout.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        # Сохраняем пользователя
+        serializer.save(user=user)
+        secure_code_obj = user.securecode
+        # Добавляем телеграмм и сливаем в одну тренировку
+        self.link_data_user(secure_code_obj)
+
+
+
+
+

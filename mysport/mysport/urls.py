@@ -8,6 +8,7 @@ from rest_framework.routers import DefaultRouter
 from users.views import *
 from nutrition.views import *
 from users.urls import *
+from workout.views import *
 
 # JWT токены
 from rest_framework_simplejwt.views import (
@@ -40,6 +41,7 @@ router.register(r'products', ProductViewSet, basename='products')
 router.register(r'makers', MakerViewSet, basename='makers')
 router.register(r'countries', CountryViewSet, basename='countries')
 router.register(r'categories', CategoryViewSet, basename='categories'),
+router.register(r'workouts', WorkoutViewSet, basename='workouts'),
 
 urlpatterns += [path('api/', include(router.urls))]
 

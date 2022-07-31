@@ -179,7 +179,7 @@ def nutrition_list(request, format=None):  # format - для суффиксов 
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def nutrition_detail(request, pk, format=None): # format - для суффиксов к url адресам
+def nutrition_detail(request, pk, format=None):  # format - для суффиксов к url адресам
 
     try:
         product = Product.objects.get(pk=pk)
