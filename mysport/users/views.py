@@ -1,6 +1,7 @@
 from django.contrib.auth import logout
 from django.contrib.auth.forms import UserChangeForm
-from django.contrib.auth.views import LogoutView, LoginView, PasswordResetView, PasswordChangeView
+from django.contrib.auth.views import LogoutView, LoginView, PasswordResetView, PasswordChangeView, \
+    PasswordResetDoneView, PasswordResetCompleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import ModelForm
 from django.shortcuts import render, redirect
@@ -91,7 +92,14 @@ class PasswordReset(PasswordResetView):
     template_name = 'users/reset_password.html'
     email_template_name = 'users/reset_password_email.html'
     subject_template_name = 'users/reset_password_email_subject.html'
-    from_email = 'pinkhit@mail.ru'
+    from_email = 'infohakhak@yandex.ru'
+
+
+class UserPasswordResetCompleteView(PasswordResetCompleteView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["login_url"] = reverse_lazy('site_login')
+        return context
 
 
 class UserChangeView(UpdateView):

@@ -9,15 +9,24 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    min-width: 500px;
+    height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+.container {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 header,
 footer {
     color: rgba(80, 27, 44);
-
 }
-
-header {}
 
 .main {
     width: 80%;
@@ -25,6 +34,7 @@ header {}
     margin: 0 auto;
     display: flex;
     font-size: 18px;
+    flex: 1 1 auto;
 }
 
 .main-content {
@@ -334,7 +344,7 @@ textarea {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    height: 600px;
+    min-height: 600px;
     display: flex;
     justify-content: space-around;
     font-size: 20px;

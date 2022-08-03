@@ -6,8 +6,11 @@
 <html lang="ru">
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=500">
+    <link rel='stylesheet' href="{% static 'main.css' %}">
     <title>{% block title %}MySport{% endblock %}</title>
-    <link rel='stylesheet' type='text/css' href="{% static 'main.css' %}">
     <style>
         @font-face {
             font-family: "Exo2";
@@ -18,7 +21,8 @@
 </head>
 
 <body>
-    <header>
+    <div class="container">
+        <header>
         <div class="main-header">
             <div class="header-logo">
                 <div class="logo"><a href="{% url 'home' %}"><img src="{% static 'img/site-logo.png' %}"></a></div>
@@ -37,77 +41,76 @@
             </div>
         </div>
     </header>
+        <div class="main">
+            {% if user.is_authenticated %}
+            {% show_new_messages as cnt_list_new_message %}
+            {% endif %}
 
-    <div class="main">
-        {% if user.is_authenticated %}
-        {% show_new_messages as cnt_list_new_message %}
-        {% endif %}
-
-        <div class="main-content">
-            {% block breadcrumbs %}{% endblock %}
-            {% include 'info_messages.html' %}
-            {% block content %}{% endblock %}
-        </div>
-        <div class="sidebar">
-            <div class="nav">
-                {% if user.is_authenticated %}
-                <p class="username">Вы вошли, как {{ user.username }}</p>
-                {% endif %}
-                <p class="title-menu">Меню сайта</p>
-                <ul class="list-menu">
+            <div class="main-content">
+                {% block breadcrumbs %}{% endblock %}
+                {% include 'info_messages.html' %}
+                {% block content %}{% endblock %}
+            </div>
+            <div class="sidebar">
+                <div class="nav">
                     {% if user.is_authenticated %}
-                    <li class="menu-item">
-                        <div class="menu-item-img">
-                            <a href="{% url 'profile' %}"><img src="{% static 'img/account.png' %}" alt=""></a>
-                        </div>
-                        <div class="menu-item-link">
-                            <a href="{% url 'profile' %}">MY Профиль</a>
-                        </div>
-                    </li>
-                    <li class="menu-item">
-                        <div class="menu-item-img">
-                            <a href="{% url 'user_message' %}"><img src="{% static 'img/message.png' %}" alt=""></a>
-                        </div>
-                        <div class="menu-item-link">
-                            <a href="{% url 'user_message' %}">MY Сообщения  
-                                {% if cnt_list_new_message.0 %}
-                                - {{ cnt_list_new_message.0 }}
-                                {% endif %}
-                            </a>
-                        </div>
-                    </li>
-                    <li class="menu-item">
-                        <div class="menu-item-img">
-                            <a href="{% url 'history_workout' %}"><img src="{% static 'img/running.png' %}" alt=""></a>
-                        </div>
-                        <div class="menu-item-link">
-                            <a href="{% url 'history_workout' %}">MYSport</a>
-                        </div>
-                    </li>
+                    <p class="username">Вы вошли, как {{ user.username }}</p>
                     {% endif %}
-                    <li class="menu-item">
-                        <div class="menu-item-img">
-                            <a href="#"><img src="{% static 'img/nutrition.png' %}" alt=""></a>
-                        </div>
-                        <div class="menu-item-link">
-                            <a href="{% url 'product' %}">MY Питание</a>
-                        </div>
-                    </li>
-                </ul>
+                    <p class="title-menu">Меню сайта</p>
+                    <ul class="list-menu">
+                        {% if user.is_authenticated %}
+                        <li class="menu-item">
+                            <div class="menu-item-img">
+                                <a href="{% url 'profile' %}"><img src="{% static 'img/account.png' %}" alt=""></a>
+                            </div>
+                            <div class="menu-item-link">
+                                <a href="{% url 'profile' %}">MY Профиль</a>
+                            </div>
+                        </li>
+                        <li class="menu-item">
+                            <div class="menu-item-img">
+                                <a href="{% url 'user_message' %}"><img src="{% static 'img/message.png' %}" alt=""></a>
+                            </div>
+                            <div class="menu-item-link">
+                                <a href="{% url 'user_message' %}">MY Сообщения
+                                    {% if cnt_list_new_message.0 %}
+                                    - {{ cnt_list_new_message.0 }}
+                                    {% endif %}
+                                </a>
+                            </div>
+                        </li>
+                        <li class="menu-item">
+                            <div class="menu-item-img">
+                                <a href="{% url 'history_workout' %}"><img src="{% static 'img/running.png' %}" alt=""></a>
+                            </div>
+                            <div class="menu-item-link">
+                                <a href="{% url 'history_workout' %}">MYSport</a>
+                            </div>
+                        </li>
+                        {% endif %}
+                        <li class="menu-item">
+                            <div class="menu-item-img">
+                                <a href="#"><img src="{% static 'img/nutrition.png' %}" alt=""></a>
+                            </div>
+                            <div class="menu-item-link">
+                                <a href="{% url 'product' %}">MY Питание</a>
+                            </div>
+                        </li>
+                    </ul>
 
-            </div>
-            <hr>
-            <div class="news">
+                </div>
+                <hr>
+                <div class="news">
                 {% get_news_in_bar %}
+                </div>
             </div>
         </div>
+        <footer>
+            <div class="footer-site">
+                Подвал сайта
+            </div>
+        </footer>
     </div>
-
-    <footer>
-        <div class="footer-site">
-            Подвал сайта
-        </div>
-    </footer>
 </body>
 
 </html>
